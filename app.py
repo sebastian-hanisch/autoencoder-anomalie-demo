@@ -172,7 +172,7 @@ with st.sidebar:
     )
     p_features = st.slider(
         "Merkmale", *bounds("p_slider"), key="p_slider",
-        help="Anzahl der Kennzahlen je Tour (ab 13 zusätzliche Mischungen der versteckten Faktoren). AUC des Autoencoders bei 2 / 5 / 8 / 12 / 20 / 30 Merkmalen: 0.94 / 0.67 / 0.68 / 0.68 / 0.79 / 0.86; das PCA-Residuum bei Engpass 2 hat 0.80 / 0.51 / 0.47 / 0.49 / 0.47 / 0.46. "
+        help="Anzahl der Kennzahlen je Tour (ab 13 zusätzliche Mischungen der versteckten Faktoren). AUC des Autoencoders bei 2 / 5 / 8 / 12 / 20 / 30 Merkmalen: 0.94 / 0.67 / 0.68 / 0.68 / 0.79 / 0.86; das PCA-Residuum bei Engpass 2 hat 0.76-0.80 (rechnerabhängig) / 0.51 / 0.47 / 0.49 / 0.47 / 0.46. "
              "Bei zwei Merkmalen ist Engpass 2 kein Engpass mehr.",
     )
     n_noise = st.slider(
@@ -229,7 +229,7 @@ with st.sidebar:
     )
     epochs = st.slider(
         "Epochen", *bounds("epochs_slider"), key="epochs_slider", step=10,
-        help="Trainingsschritte (Vollbatch, Adam, Lernrate 0.01). **0 = das untrainierte Netz.** Bei 0 / 10 / 30 / 100 / 300 / 1000 Epochen: AUC 1.00 / 1.00 / 0.97 / 0.87 / 0.68 / 0.56, F1 an der Schwelle 0.98 / 0.97 / 0.86 / 0.58 / 0.26 / 0.14: "
+        help="Trainingsschritte (Vollbatch, Adam, Lernrate 0.01). **0 = das untrainierte Netz.** Bei 0 / 10 / 30 / 100 / 300 / 1000 Epochen: AUC 1.00 / 1.00 / 0.97 / 0.87 / 0.68 / 0.56 (nach 1000 Epochen je nach Rechner bis 0.67), F1 an der Schwelle 0.98 / 0.97 / 0.86 / 0.58 / 0.26 / 0.14: "
              "je besser das Netz rekonstruiert, desto schlechter die Rangfolge (bei ReLU 0.96 / 1.00 / 1.00 / 0.89 / 0.77 / 0.59).",
     )
     nu = st.slider(
@@ -575,7 +575,7 @@ st.markdown(
 | Annahme | Was passiert, wenn sie verletzt ist | Wer setzt an |
 |---|---|---|
 | **Anomalien verlassen die gelernte Struktur** | Liegen sie **auf** ihr, werden sie mitrekonstruiert: im Standardfall (Sonderfahrten in der Faktorebene) AUC **0.68**, das PCA-Residuum bei Engpass 2 **0.49**; das lineare Autoencoder ist nach 300 Epochen das PCA-Residuum (0.49). Beim Korrelationsbruch, der die Ebene verlässt, AUC 1.00. | Isolation Forest, One-Class SVM, Wurzel |
-| **Das Training verbessert den Detektor** | Es verschlechtert ihn: AUC **1.00 vor dem Training**, 0.87 nach 100 und 0.56 nach 1000 Epochen (F1 0.98 → 0.58 → 0.14); bei 45 % Anomalien 1.00 → 0.56, bei dichter Gruppe 0.96 → 0.37. Nur beim Korrelationsbruch und in der Lücke hilft es (0.62 → 1.00; 0.03 → 0.52). | Deep SVDD (dasselbe Muster) |
+| **Das Training verbessert den Detektor** | Es verschlechtert ihn: AUC **1.00 vor dem Training**, 0.87 nach 100 und 0.56-0.67 nach 1000 Epochen, je nach Rechner (F1 0.98 → 0.58 → 0.14); bei 45 % Anomalien 1.00 → 0.56, bei dichter Gruppe 0.96 → 0.37. Nur beim Korrelationsbruch und in der Lücke hilft es (0.62 → 1.00; 0.03 → 0.52). | Deep SVDD (dasselbe Muster) |
 | **Man weiß, wann man aufhören muss** | Die beste Epochenzahl hängt vom Szenario ab (Standardfall 0, Korrelationsbruch etwa 100, Lücke etwa 30) und ist ohne Etiketten nicht zu erkennen; über 10 Netz-Seeds streut die AUC nach 300 Epochen mit 0.07 (schlechtestes Netz 0.61). | (keiner) |
 | **Der Engpass passt** | Engpass 1 (unter der latenten Dimension 2) sieht Anomalien in der Ebene (AUC 0.88), verliert beim Korrelationsbruch (0.88 statt 1.00); Engpass 2 ist umgekehrt. Beim Engpass 8 werden die Anomalien wieder erkannt (0.88; PCA-Residuum 0.52). | Feature Bagging, Wurzel |
 | **Alle Merkmale sind rekonstruierbar** | 40 Rauschmerkmale: AUC **0.25** (unter Raten) - 96 % des Fehlers kommen aus den nicht rekonstruierbaren Rauschspalten. Mit Engpass 1: 0.68; das untrainierte Netz 0.995. | Isolation Forest, ECOD |
