@@ -222,7 +222,7 @@ with st.sidebar:
     )
     depth = st.slider(
         "Tiefe (verdeckte Schichten je Seite)", *bounds("depth_slider"), key="depth_slider",
-        help="Verdeckte Schichten im Encoder und im Decoder (0 = lineares Autoencoder = PCA). AUC bei 0 / 1 / 2 / 3: 0.49 / 0.68 / 0.71 / 0.76 (F1 0.12 / 0.26 / 0.27 / 0.37) - das lineare Autoencoder ist nach 300 Epochen das PCA-Residuum (0.49), tiefere Netze sind noch nicht so weit konvergiert.",
+        help="Verdeckte Schichten im Encoder und im Decoder (0 = linearer Autoencoder = PCA). AUC bei 0 / 1 / 2 / 3: 0.49 / 0.68 / 0.71 / 0.76 (F1 0.12 / 0.26 / 0.27 / 0.37) - der lineare Autoencoder ist nach 300 Epochen das PCA-Residuum (0.49), tiefere Netze sind noch nicht so weit konvergiert.",
     )
     width = st.select_slider(
         "Breite der verdeckten Schichten", options=list(C.WIDTH_OPTIONS), key="width_select",
@@ -497,19 +497,19 @@ if st.session_state.get("bottleneck_on"):
         bt = _bottleneck(tuple(kv for kv in base_data if kv[0] not in ("kind", "curvature")), settings)
     st.plotly_chart(build_bottleneck(bt), width="stretch", key="bottleneck_chart")
     st.caption("AUC bei Engpass 1 / 2 / 3 / 4 / 6 / 8 (Mittel über 5 feste Datensätze; das Szenario hat 2 latente Faktoren). **Verstreute Anomalien** (in der Ebene): Autoencoder 0.88 / 0.68 / 0.64 / 0.78 / 0.81 / 0.88, PCA-Residuum 0.91 / 0.49 / 0.49 / 0.50 / 0.50 / 0.52 - "
-               "erst ein Engpass **unter** 2 sieht sie. **Korrelationsbruch** (verlässt die Ebene): 0.88 / 1.00 / 1.00 / 1.00 / 1.00 / 0.98 (PCA-Residuum 0.82 / 1.00 / 1.00 / 1.00 / 1.00 / 0.97). **Gekrümmt**: 1.00 / 0.98 / 0.97 / 0.94 / 0.97 / 0.98 (PCA-Residuum 1.00 / 0.99 / 0.97 / 0.86 / 0.72 / 0.60). "
+               "das PCA-Residuum sieht sie erst bei einem Engpass **unter** 2; der Autoencoder sieht sie bei Engpass 1 und bei Engpass 8 (0.88), dazwischen schwächer (0.64-0.81). **Korrelationsbruch** (verlässt die Ebene): 0.88 / 1.00 / 1.00 / 1.00 / 1.00 / 0.98 (PCA-Residuum 0.82 / 1.00 / 1.00 / 1.00 / 1.00 / 0.97). **Gekrümmt**: 1.00 / 0.98 / 0.97 / 0.94 / 0.97 / 0.98 (PCA-Residuum 1.00 / 0.99 / 0.97 / 0.86 / 0.72 / 0.60). "
                "Die beste Wahl des Engpasses hängt von der Art der Anomalien ab - und die kennt man vorher nicht.")
 
 st.markdown("---")
 
-st.subheader("🔬 Das lineare Autoencoder lernt die PCA")
+st.subheader("🔬 Der lineare Autoencoder lernt die PCA")
 if st.button("Tiefe 0, Engpass 2, 1000 Epochen berechnen (dauert etwa 15 Sekunden)", key="linear_start"):
     st.session_state["linear_on"] = True
 if st.session_state.get("linear_on"):
     with st.spinner("Trainiere 5 lineare Autoencoder über 1000 Epochen..."):
         li = _linear(base_data, settings)
     st.plotly_chart(build_linear(li), width="stretch", key="linear_chart")
-    st.caption("Der größte Hauptwinkel zwischen dem Decoder-Unterraum und dem PCA-Unterraum fällt von 83° (Epoche 0) über 27° (81 Epochen) und 1° (152) auf 0.03° (1000): das lineare Autoencoder findet **denselben Unterraum** wie die PCA (nicht dieselben Achsen). "
+    st.caption("Der größte Hauptwinkel zwischen dem Decoder-Unterraum und dem PCA-Unterraum fällt von 83° (Epoche 0) über 27° (81 Epochen) und 1° (152) auf 0.03° (1000): der lineare Autoencoder findet **denselben Unterraum** wie die PCA (nicht dieselben Achsen). "
                "Die AUC des Rekonstruktionsfehlers folgt: 1.00 bis 23 Epochen (der Unterraum liegt noch beliebig), 0.97 nach 81, 0.52 nach 152 und 0.49 danach - das PCA-Residuum hat 0.49. Die AUC verschwindet, sobald das Netz die Struktur gelernt hat.")
 
 st.markdown("---")
@@ -575,7 +575,7 @@ st.markdown(
     """
 | Annahme | Was passiert, wenn sie verletzt ist | Wer setzt an |
 |---|---|---|
-| **Anomalien verlassen die gelernte Struktur** | Liegen sie **auf** ihr, werden sie mitrekonstruiert: im Standardfall (Sonderfahrten in der Faktorebene) AUC **0.68**, das PCA-Residuum bei Engpass 2 **0.49**; das lineare Autoencoder ist nach 300 Epochen das PCA-Residuum (0.49). Beim Korrelationsbruch, der die Ebene verlässt, AUC 1.00. | Isolation Forest, One-Class SVM, Wurzel |
+| **Anomalien verlassen die gelernte Struktur** | Liegen sie **auf** ihr, werden sie mitrekonstruiert: im Standardfall (Sonderfahrten in der Faktorebene) AUC **0.68**, das PCA-Residuum bei Engpass 2 **0.49**; der lineare Autoencoder ist nach 300 Epochen das PCA-Residuum (0.49). Beim Korrelationsbruch, der die Ebene verlässt, AUC 1.00. | Isolation Forest, One-Class SVM, Wurzel |
 | **Das Training verbessert den Detektor** | Es verschlechtert ihn: AUC **1.00 vor dem Training**, 0.87 nach 100 und 0.56-0.67 nach 1000 Epochen, je nach Rechner (F1 0.98 → 0.58 → 0.14-0.33); bei 45 % Anomalien 1.00 → 0.56, bei dichter Gruppe 0.96 → 0.37. Nur beim Korrelationsbruch und in der Lücke hilft es (0.62 → 1.00; 0.03 → 0.52). | Deep SVDD (dasselbe Muster) |
 | **Man weiß, wann man aufhören muss** | Die beste Epochenzahl hängt vom Szenario ab (Standardfall 0, Korrelationsbruch etwa 100, Lücke etwa 30) und ist ohne Etiketten nicht zu erkennen; über 10 Netz-Seeds streut die AUC nach 300 Epochen mit 0.07 (schlechtestes Netz 0.61). | (keiner) |
 | **Der Engpass passt** | Engpass 1 (unter der latenten Dimension 2) sieht Anomalien in der Ebene (AUC 0.88), verliert beim Korrelationsbruch (0.88 statt 1.00); Engpass 2 ist umgekehrt. Beim Engpass 8 werden die Anomalien wieder erkannt (0.88; PCA-Residuum 0.52). | Feature Bagging, Wurzel |

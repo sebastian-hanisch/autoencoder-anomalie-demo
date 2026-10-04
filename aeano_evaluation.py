@@ -1,6 +1,6 @@
 """Auswertung der Autoencoder-Anomalie-Demo: Kennzahlen der Anomalie-Erkennung (AUC, mittlere Präzision, Precision/Recall/F1, Fehlalarmrate; aus der Wurzel-Demo übernommen), Analyse einer Aufnahme für den Autoencoder,
 den Isolation Forest, die robuste Schätzung der Wurzel und Deep SVDD (dazu das PCA-Residuum, das untrainierte Netz, One-Class SVM, LOF und ECOD als Bezug), Sweeps, Experimente auf Abruf (Szenarien, Epochenverlauf,
-Netz-Seeds, Engpass, lineares Autoencoder gegen PCA, Schwelle, Kosten) und Urteil."""
+Netz-Seeds, Engpass, linearer Autoencoder gegen PCA, Schwelle, Kosten) und Urteil."""
 
 import time
 from dataclasses import dataclass
@@ -130,7 +130,7 @@ class Analysis:
     settings: Settings
     params: tuple                 # (n, p, n_noise, n_modes, curvature, noise, contamination, kind, strength, seed)
     p_total: int                  # Zahl der Merkmale einschließlich Rauschmerkmale
-    net: ae.Model                 # das trainierte Autoencoder
+    net: ae.Model                 # der trainierte Autoencoder
     dsvdd_model: dv.Model         # Deep SVDD des Vergleichs (Voreinstellung)
     ocsvm_fit: svm.Fit
     forest_if: isf.Forest
@@ -232,7 +232,7 @@ def analyse_for(params, settings=Settings()):
 
 def score_maps(X2, settings=Settings(), grid=80, pad=0.5):
     """Rekonstruktionsfehler-Karte des Autoencoders und Isolation-Forest-Score auf einem Raster für zweidimensionale Kennzahlen: (xs, ys, E [grid, grid], S [grid, grid], außerhalb [n]).
-    Das Autoencoder wird dafür auf nur diesen zwei Merkmalen mit Engpass 1 neu trainiert (bei zwei Merkmalen ist 1 der einzige Engpass); E = Fehler - Schwelle (negativ: gut rekonstruiert)."""
+    Der Autoencoder wird dafür auf nur diesen zwei Merkmalen mit Engpass 1 neu trainiert (bei zwei Merkmalen ist 1 der einzige Engpass); E = Fehler - Schwelle (negativ: gut rekonstruiert)."""
     X2 = np.asarray(X2, dtype=float)
     lo, hi = X2.min(axis=0), X2.max(axis=0)
     span = hi - lo
@@ -393,7 +393,7 @@ def bottleneck_table(settings=Settings(), codes=(1, 2, 3, 4, 6, 8), kinds=BOTTLE
 
 
 def linear_table(settings=Settings(), n_code=2, epochs=(0, 10, 30, 100, 300, 1000), **base):
-    """Lineares Autoencoder (Tiefe 0) gegen PCA-Residuum: größter Hauptwinkel des Decoder-Unterraums zum PCA-Unterraum und AUC über die Epochen; das PCA-Residuum ist die Grenze, gegen die das Autoencoder konvergiert
+    """Linearer Autoencoder (Tiefe 0) gegen PCA-Residuum: größter Hauptwinkel des Decoder-Unterraums zum PCA-Unterraum und AUC über die Epochen; das PCA-Residuum ist die Grenze, gegen die der Autoencoder konvergiert
     (Mittel über die festen Sweep-Datensätze; das Netz wird dafür 1000 Epochen trainiert)."""
     angles, aucs, pca_aucs = [], [], []
     for seed in C.SWEEP_SEEDS:

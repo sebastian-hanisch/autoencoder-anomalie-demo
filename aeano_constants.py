@@ -115,7 +115,7 @@ PRESETS = {
     "Standardfall (Voreinstellung)": _preset(),
     "Ohne Training (0 Epochen)": _preset(epochs=0),
     "Engpass 1": _preset(n_code=1),
-    "Lineares Autoencoder = PCA": _preset(depth=0, epochs=1000),
+    "Linearer Autoencoder = PCA": _preset(depth=0, epochs=1000),
     "Korrelationsbruch": _preset(kind="decorrelated"),
     "40 Rauschmerkmale": _preset(n_noise=40),
     "Kleine Stichprobe (50 Touren)": _preset(n=50),
@@ -128,7 +128,7 @@ PRESET_HELP = {
                                  "im Wesentlichen die Länge der Tour, also der Abstand vom Zentrum - so gut wie der Isolation Forest. Jede Epoche Training verschlechtert die Rangfolge (10 Epochen 1.00, 30 Epochen 0.97, 100 Epochen 0.87, 300 Epochen 0.68).",
     "Engpass 1": "Im Mittel über fünf Aufnahmen: Engpass 1 - weniger Werte als latente Faktoren (2). Das Netz kann die Ebene nicht abbilden, extreme Touren werden schlecht rekonstruiert: AUC 0.88, F1 0.69 (Engpass 2: 0.68 / 0.26); "
                  "das PCA-Residuum bei Engpass 1 hat 0.91. Beim Korrelationsbruch verliert der kleinere Engpass dagegen (0.88 statt 1.00).",
-    "Lineares Autoencoder = PCA": "Im Mittel über fünf Aufnahmen: Tiefe 0 (linear), Engpass 2, 1000 Epochen. Der Decoder-Unterraum ist dann mit dem PCA-Unterraum identisch (Winkel 0.03° nach 1000 Epochen; nach 152 Epochen 1°), und der Rekonstruktionsfehler ist das PCA-Residuum: "
+    "Linearer Autoencoder = PCA": "Im Mittel über fünf Aufnahmen: Tiefe 0 (linear), Engpass 2, 1000 Epochen. Der Decoder-Unterraum ist dann mit dem PCA-Unterraum identisch (Winkel 0.03° nach 1000 Epochen; nach 152 Epochen 1°), und der Rekonstruktionsfehler ist das PCA-Residuum: "
                                   "AUC 0.49, wie das PCA-Residuum (0.49) - blind. Nach 12 Epochen, wo der Unterraum noch beliebig liegt (Winkel 87°), war die AUC 1.00.",
     "Korrelationsbruch": "Im Mittel über fünf Aufnahmen: die Merkmale der Anomalien sind je Spalte aus den Normalen neu gezogen - sie verlassen die Ebene. Der Autoencoder hat AUC 1.00 und F1 0.98 (Fehlalarmrate 0 %): hier trifft er. "
                          "Robust 1.00 / 0.84, LOF 0.99, Deep SVDD 0.92, One-Class SVM 0.88, Isolation Forest 0.80, ECOD 0.56. **Hier hilft das Training**: untrainiert 0.70, nach 100 Epochen 1.00.",
@@ -142,7 +142,7 @@ PRESET_EXPECTED_BANDS = {
     "Standardfall (Voreinstellung)": {"ae_auc": (0.45, 0.9), "untrained_auc": (0.97, 1.0), "pca_auc": (0.3, 0.65), "verdict": ("training_hurts",)},
     "Ohne Training (0 Epochen)": {"ae_auc": (0.97, 1.0), "ae_f1": (0.85, 1.0), "verdict": ("comparable",)},
     "Engpass 1": {"ae_auc": (0.7, 0.98), "untrained_auc": (0.97, 1.0), "verdict": ("training_hurts",)},
-    "Lineares Autoencoder = PCA": {"ae_auc": (0.3, 0.65), "pca_auc": (0.3, 0.65), "iforest_auc": (0.95, 1.0), "verdict": ("blind",)},
+    "Linearer Autoencoder = PCA": {"ae_auc": (0.3, 0.65), "pca_auc": (0.3, 0.65), "iforest_auc": (0.95, 1.0), "verdict": ("blind",)},
     "Korrelationsbruch": {"ae_auc": (0.97, 1.0), "ae_f1": (0.85, 1.0), "robust_auc": (0.95, 1.0), "untrained_auc": (0.4, 0.85), "verdict": ("ae_wins", "comparable")},
     "40 Rauschmerkmale": {"ae_auc": (0.0, 0.5), "untrained_auc": (0.9, 1.0), "iforest_auc": (0.95, 1.0), "verdict": ("blind",)},
     "Kleine Stichprobe (50 Touren)": {"ae_auc": (0.0, 0.6), "untrained_auc": (0.95, 1.0), "iforest_auc": (0.95, 1.0), "verdict": ("blind",)},

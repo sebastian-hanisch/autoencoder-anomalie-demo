@@ -3,7 +3,7 @@
 Ein Netz aus **Encoder** (p -> Breite^Tiefe -> Engpass k, linear) und **Decoder** (k -> Breite^Tiefe -> p, linear) wird auf den Trainingstouren trainiert, sie möglichst genau zu rekonstruieren (mittleres Fehlerquadrat).
 Der **Anomalie-Wert** einer Tour ist ihr Rekonstruktionsfehler (mittleres Fehlerquadrat über die Merkmale, in z-Einheiten): was das Netz nicht rekonstruieren kann, wird als Anomalie gewertet.
 
-- **Tiefe 0**: lineares Autoencoder p -> k -> p. Es spannt (bei ausreichendem Training) denselben Unterraum auf wie die ersten k Hauptkomponenten der PCA (Baldi und Hornik); sein Rekonstruktionsfehler ist dann das **PCA-Residuum**.
+- **Tiefe 0**: linearer Autoencoder p -> k -> p. Es spannt (bei ausreichendem Training) denselben Unterraum auf wie die ersten k Hauptkomponenten der PCA (Baldi und Hornik); sein Rekonstruktionsfehler ist dann das **PCA-Residuum**.
 - **Tiefe >= 1**: nichtlineare Aktivierung (tanh oder ReLU) in den verdeckten Schichten; der Engpass und die Ausgabeschicht bleiben linear.
 - **Schwelle**: (1 - nu)-Quantil der Trainingsfehler (markiert höchstens den Anteil nu) - wie bei One-Class SVM und Deep SVDD ist der Anteil eingebaut.
 - Initialisierung Xavier (tanh) bzw. He (ReLU), Bias-Terme bei 0; der Netz-Seed ist vom Datensatz-Seed entkoppelt."""
@@ -136,7 +136,7 @@ def _errors_and_code(weights, biases, Z, activation, depth):
 
 
 def fit_autoencoder(X, n_code=2, depth=1, width=16, activation="tanh", nu=0.1, lr=0.01, n_epochs=300, seed=0):
-    """Trainiert das Autoencoder auf den Kennzahlen X [n, p] (werden intern standardisiert)."""
+    """Trainiert den Autoencoder auf den Kennzahlen X [n, p] (werden intern standardisiert)."""
     if activation not in ACTIVATIONS:
         raise ValueError(f"activation in {ACTIVATIONS}")
     if depth < 0 or n_code < 1 or not 0 < nu <= 1:
@@ -234,5 +234,5 @@ def decoder_subspace(weights):
 def linear_angle_curve(model, pca_ax):
     """Größter Hauptwinkel (Grad) zwischen dem Decoder-Unterraum des linearen Autoencoders und dem PCA-Unterraum an den Momentaufnahmen. Nur Tiefe 0."""
     if model.depth != 0:
-        raise ValueError("nur für das lineare Autoencoder (Tiefe 0)")
+        raise ValueError("nur für den linearen Autoencoder (Tiefe 0)")
     return {e: float(principal_angles(decoder_subspace(ws), pca_ax).max()) for e, (ws, bs) in sorted(model.weight_snapshots.items())}

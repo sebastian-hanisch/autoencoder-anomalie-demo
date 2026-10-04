@@ -1,4 +1,4 @@
-"""Autoencoder als Anomalie-Detektor: Gradienten gegen Finite Differenzen, Aufbau (Engpass, Parameterzahl), das PCA-Residuum gegen die Singulärwertzerlegung, das lineare Autoencoder gegen den PCA-Unterraum (Baldi und Hornik),
+"""Autoencoder als Anomalie-Detektor: Gradienten gegen Finite Differenzen, Aufbau (Engpass, Parameterzahl), das PCA-Residuum gegen die Singulärwertzerlegung, der lineare Autoencoder gegen den PCA-Unterraum (Baldi und Hornik),
 Schwelle, Determinismus und Netz-Seed; die kopierten Bausteine der Vorgänger (One-Class SVM mit sklearn-Kreuzprüfung, Deep SVDD, LOF, Isolation Forest, χ², MCD, ECOD)."""
 
 import numpy as np
@@ -128,7 +128,7 @@ def test_invalid_arguments_are_rejected():
             ae.fit_autoencoder(X, n_epochs=2, **kw)
 
 
-# --- PCA-Residuum und das lineare Autoencoder ---------------------------------------------------------------------------------------------------
+# --- PCA-Residuum und der lineare Autoencoder ---------------------------------------------------------------------------------------------------
 
 
 def test_pca_residual_hand_instance_and_svd_reference():

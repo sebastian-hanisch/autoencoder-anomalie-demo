@@ -1,5 +1,5 @@
 """Plotly-Visualisierungen der Autoencoder-Anomalie-Demo: Touren in der Ebene der größten Streuung, Rekonstruktion einzelner Touren, Trainingsverlauf, Fehler je Merkmal, Rekonstruktionsfehler in der Ebene zweier Merkmale,
-Wert-Histogramm mit Schwelle, ROC-Kurven, Kennzahlen-Balken, Sweeps und die Experimente (Szenarien, Epochenverlauf, Netz-Seeds, Engpass, lineares Autoencoder gegen PCA, Schwelle, Kosten). Alle Figuren laufen durch `lock_axes`."""
+Wert-Histogramm mit Schwelle, ROC-Kurven, Kennzahlen-Balken, Sweeps und die Experimente (Szenarien, Epochenverlauf, Netz-Seeds, Engpass, linearer Autoencoder gegen PCA, Schwelle, Kosten). Alle Figuren laufen durch `lock_axes`."""
 
 import numpy as np
 import plotly.graph_objects as go
@@ -200,7 +200,7 @@ def build_training(loss_history, epochs, aucs):
 
 
 def build_boundary(xs, ys, E, S, X2, anomaly, outside, names):
-    """Rekonstruktionsfehler in der Ebene zweier Rohmerkmale (das Autoencoder wird dafür auf nur diese zwei Merkmale mit Engpass 1 neu trainiert): links Fehler minus Schwelle (schwarze Linie: Schwelle; blau = gut
+    """Rekonstruktionsfehler in der Ebene zweier Rohmerkmale (der Autoencoder wird dafür auf nur diese zwei Merkmale mit Engpass 1 neu trainiert): links Fehler minus Schwelle (schwarze Linie: Schwelle; blau = gut
     rekonstruiert), rechts zum Vergleich der Score des Isolation Forest (Linie bei 0.5). Umkreiste Punkte liegen über der Schwelle."""
     fig = make_subplots(rows=1, cols=2, subplot_titles=("Autoencoder: Fehler − Schwelle", "Isolation Forest: Score"), horizontal_spacing=0.10)
     lim = float(np.quantile(np.abs(E), 0.9)) or 1e-9
@@ -262,11 +262,11 @@ def build_bottleneck(rows):
 
 
 def build_linear(result):
-    """Lineares Autoencoder (Tiefe 0, Engpass 2): links der größte Hauptwinkel zwischen Decoder-Unterraum und PCA-Unterraum (Grad) über die Epochen, rechts die AUC des Rekonstruktionsfehlers gegen die des PCA-Residuums (Linie)."""
+    """Linearer Autoencoder (Tiefe 0, Engpass 2): links der größte Hauptwinkel zwischen Decoder-Unterraum und PCA-Unterraum (Grad) über die Epochen, rechts die AUC des Rekonstruktionsfehlers gegen die des PCA-Residuums (Linie)."""
     epochs = [str(e) for e in result["epochs"]]
     fig = make_subplots(rows=1, cols=2, subplot_titles=("Winkel zum PCA-Unterraum", "AUC"), horizontal_spacing=0.12)
     fig.add_trace(go.Scatter(x=epochs, y=result["angle"], mode="lines+markers", line=dict(color=PINK, width=3), hoverinfo="skip", showlegend=False), row=1, col=1)
-    fig.add_trace(go.Scatter(x=epochs, y=result["auc"], mode="lines+markers", line=dict(color=PINK, width=3), name="lineares Autoencoder", hoverinfo="skip"), row=1, col=2)
+    fig.add_trace(go.Scatter(x=epochs, y=result["auc"], mode="lines+markers", line=dict(color=PINK, width=3), name="linearer Autoencoder", hoverinfo="skip"), row=1, col=2)
     fig.add_hline(y=result["pca_auc"], line=dict(color="black", dash="dash"), row=1, col=2, annotation_text="PCA-Residuum", annotation_position="top left")
     fig.update_xaxes(title="Epochen", type="category")
     fig.update_yaxes(title="Grad", col=1)

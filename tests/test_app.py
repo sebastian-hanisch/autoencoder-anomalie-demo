@@ -12,7 +12,7 @@ from aeano_presets import PRESET_KEYS
 
 ROOT = Path(__file__).resolve().parent.parent
 APP = ROOT / "app.py"
-EXPECTED_KIND = {"Standardfall (Voreinstellung)": "warning", "Ohne Training (0 Epochen)": "success", "Engpass 1": "warning", "Lineares Autoencoder = PCA": "warning", "Korrelationsbruch": "success",
+EXPECTED_KIND = {"Standardfall (Voreinstellung)": "warning", "Ohne Training (0 Epochen)": "success", "Engpass 1": "warning", "Linearer Autoencoder = PCA": "warning", "Korrelationsbruch": "success",
                  "40 Rauschmerkmale": "warning", "Kleine Stichprobe (50 Touren)": "warning"}
 
 

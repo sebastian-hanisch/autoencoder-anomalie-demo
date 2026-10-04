@@ -9,7 +9,7 @@ und [Deep SVDD](../deepsvdd-demo); als Bezug laufen das **untrainierte** Netz, d
 
 **Einordnung in die Reihe (die Kanten des Graphen):** der Autoencoder ist der **unabhängige Rekonstruktions-Ast direkt nach der Wurzel**. Die anderen Äste fragen, wie weit eine Tour von den Normalen entfernt ist oder wie leicht sie sich isolieren lässt; der Autoencoder fragt, wie gut ein Netz sie **durch einen Engpass hindurch wieder aufbauen** kann.
 Ergebnis in Kürze: **er trifft, was die gelernte Struktur verlässt – und ist blind für das, was auf ihr liegt.** Beim **Korrelationsbruch** (die Anomalien verlassen die Ebene der Normalen) AUC **1.00** und F1 0.98; im Standardfall, wo die Sonderfahrten Verschiebungen der zwei latenten Faktoren sind und **in derselben Ebene** liegen, AUC 0.68 und F1 0.26 –
-das PCA-Residuum hat 0.49 (Raten), und das lineare Autoencoder ist nach 300 Epochen genau das PCA-Residuum. Und wie bei Deep SVDD **schadet das Training**: das untrainierte Netz hat AUC 1.00 und F1 0.98.
+das PCA-Residuum hat 0.49 (Raten), und der lineare Autoencoder ist nach 300 Epochen genau das PCA-Residuum. Und wie bei Deep SVDD **schadet das Training**: das untrainierte Netz hat AUC 1.00 und F1 0.98.
 Die Linie hat **keinen Konvergenzpunkt**; dieses Stück schließt sie ab – alle neun Stücke sind gebaut.
 ```
 elliptic-envelope-demo (Wurzel: robuste Ellipse)
@@ -24,7 +24,7 @@ elliptic-envelope-demo (Wurzel: robuste Ellipse)
 |---|---|
 | Standardfall, Voreinstellung | ❌ Autoencoder AUC **0.68**, F1 **0.26** (Fehlalarmrate 7.9 %). **PCA-Residuum bei Engpass 2: 0.49** – die Sonderfahrten liegen in der Faktorebene der Normalen und werden mitrekonstruiert. Das **untrainierte** Netz: AUC 1.00, F1 0.98. Isolation Forest 1.00 / 0.96, robust 1.00 / 0.84, Deep SVDD 0.92 / 0.62 |
 | **Epochen** | ❌ **Training schadet:** AUC bei 0 / 10 / 30 / 100 / 300 / 1000 Epochen **1.00 / 1.00 / 0.97 / 0.87 / 0.68 / 0.56** (nach 1000 Epochen je nach Rechner bis 0.67), F1 0.98 / 0.97 / 0.86 / 0.58 / 0.26 / 0.14 (nach 1000 Epochen je nach Rechner bis 0.33). Das Netz gibt vor dem Training fast nichts wieder; sein Fehler ist im Wesentlichen die Länge der Tour, also ihr Abstand von der Mitte. Bei ReLU 0.96 / 1.00 / 1.00 / 0.89 / 0.77 / 0.59 |
-| **Lineares Autoencoder = PCA** | ✅ Der größte Hauptwinkel zwischen Decoder-Unterraum und PCA-Unterraum fällt von 83° (Epoche 0) über 27° (81) und 1° (152) auf **0.03° (1000)**: **derselbe Unterraum** (Baldi und Hornik), nicht dieselben Achsen. Die AUC folgt: 1.00 bis 23 Epochen (der Unterraum liegt noch beliebig), 0.97 nach 81, 0.52 nach 152, **0.49** danach – gleich dem PCA-Residuum (0.49) |
+| **Linearer Autoencoder = PCA** | ✅ Der größte Hauptwinkel zwischen Decoder-Unterraum und PCA-Unterraum fällt von 83° (Epoche 0) über 27° (81) und 1° (152) auf **0.03° (1000)**: **derselbe Unterraum** (Baldi und Hornik), nicht dieselben Achsen. Die AUC folgt: 1.00 bis 23 Epochen (der Unterraum liegt noch beliebig), 0.97 nach 81, 0.52 nach 152, **0.49** danach – gleich dem PCA-Residuum (0.49) |
 | **Korrelationsbruch** | ✅ **Hier trifft er:** AUC **1.00**, F1 **0.98** (Fehlalarmrate 0 %), mit bekanntem Anteil 0.99. Die Anomalien haben in jedem Merkmal normale Werte, aber die Abhängigkeit stimmt nicht – sie **verlassen die Ebene**. PCA-Residuum 1.00, robust 1.00 (F1 0.84), LOF 0.99, Deep SVDD 0.92, One-Class SVM 0.88, Isolation Forest 0.80, ECOD 0.56. Hier **hilft das Training**: untrainiert 0.70, Verlauf 0.62 → 0.97 (33 Epochen) → 1.00 (105) |
 | **Engpass** | ⚠️ AUC bei Engpass 1 / 2 / 3 / 4 / 6 / 8 (verstreute Anomalien): **0.88** / 0.68 / 0.64 / 0.78 / 0.81 / 0.88, F1 0.69 / 0.26 / 0.22 / 0.38 / 0.43 / 0.56; PCA-Residuum 0.91 / 0.49 / 0.49 / 0.50 / 0.50 / 0.52. Beim Korrelationsbruch **0.88** / 1.00 / 1.00 / 1.00 / 1.00 / 0.98. Ein Engpass **unter** der latenten Dimension (2) sieht Anomalien in der Ebene und verliert beim Korrelationsbruch |
 | Tiefe, Breite | ➖ Tiefe 0 / 1 / 2 / 3: AUC 0.49 / 0.68 / 0.71 / 0.76 (F1 0.12 / 0.26 / 0.27 / 0.37); Breite 4 / 8 / 16 / 32 / 64: 0.89 / 0.85 / 0.68 / 0.73 / 0.52 – je mehr Spielraum, desto besser rekonstruiert das Netz auch die Anomalien |
@@ -43,7 +43,7 @@ elliptic-envelope-demo (Wurzel: robuste Ellipse)
    **Training** (Verlust und AUC über die Epochen; der Rekonstruktionsfehler in der Ebene zweier Rohmerkmale, dafür mit Engpass 1 neu trainiert) → **Fehler** (dieselben Touren nach dem Training, Fehler je Merkmal, Verteilung mit Schwelle, Rang gegen die Wurzel) → **Ergebnis** (Kennzahlen und ROC-Kurven der vier Detektoren).
 2. **Was die Detektoren gefunden haben:** AUC, Recall, Fehlalarmrate, F1 (dazu der F1 mit bekanntem Anteil), Urteil (Codes: Lücke → **blind** (AUC unter 0.6, ein anderer Detektor über 0.8) → **Training schadet** (das untrainierte Netz ist um mindestens 0.05 AUC besser) → anderer Detektor besser → Autoencoder besser (Rangfolge oder Schwelle) → falsche Schwelle → ebenbürtig), Detailtabelle mit Rechenzeiten.
 3. **📐 Sweeps** über Touren, Merkmale, Rauschmerkmale, Betriebsarten, Krümmung, Rauschen, Anteil und Abstand der Anomalien, **Engpass, Tiefe, Breite, Epochen, ν**, χ²-Quantil und angenommenen Anteil (feste Datensätze ab 100000, Streuung).
-4. **🔬 Experimente auf Abruf:** AUC über die Epochen in acht Szenarien, Engpass 1–8 für drei Arten der Anomalien (gegen das PCA-Residuum), lineares Autoencoder gegen den PCA-Unterraum (Hauptwinkel und AUC über die Epochen), 10 Netz-Seeds, acht Szenarien × Detektoren (mit untrainiertem Netz und PCA-Residuum), Schwelle, Kosten.
+4. **🔬 Experimente auf Abruf:** AUC über die Epochen in acht Szenarien, Engpass 1–8 für drei Arten der Anomalien (gegen das PCA-Residuum), linearer Autoencoder gegen den PCA-Unterraum (Hauptwinkel und AUC über die Epochen), 10 Netz-Seeds, acht Szenarien × Detektoren (mit untrainiertem Netz und PCA-Residuum), Schwelle, Kosten.
 5. **🚧 Grenzen:** Tabelle "Annahme – was passiert – wer setzt an" (Anomalien verlassen die gelernte Struktur, das Training verbessert den Detektor, man weiß, wann man aufhören muss, der Engpass passt, alle Merkmale sind rekonstruierbar, genug Touren, wenig Anomalien im Training, die Schwelle ist ein Anteil).
 
 Regler: Touren (20–600), Merkmale (2–30), Rauschmerkmale (0–40), Betriebsarten (1–3), Krümmung, Rauschen, Anteil der Anomalien (1–45 %), Art (verstreut / dichte Gruppe / in der Lücke – ab zwei Betriebsarten / Korrelationsbruch), Abstand (bei "Lücke" und "Korrelationsbruch" ausgeblendet, Wert bleibt erhalten),
@@ -57,7 +57,7 @@ Regler: Touren (20–600), Merkmale (2–30), Rauschmerkmale (0–40), Betriebsa
 | Standardfall (Voreinstellung) | 0.74 | 0.34 | 1.00 | 0.98 | 0.43 | 1.00 | 0.98 | 1.00 | 0.85 | 0.94 | Training schadet |
 | Ohne Training (0 Epochen) | 1.00 | 0.98 | 1.00 | 0.98 | 0.43 | 1.00 | 0.98 | 1.00 | 0.85 | 0.94 | ebenbürtig |
 | Engpass 1 | 0.76 | 0.51 | 1.00 | 0.98 | 0.83 | 1.00 | 0.98 | 1.00 | 0.85 | 0.94 | Training schadet |
-| Lineares Autoencoder = PCA | 0.43 | 0.00 | 1.00 | 0.98 | 0.43 | 1.00 | 0.98 | 1.00 | 0.85 | 0.94 | blind |
+| Linearer Autoencoder = PCA | 0.43 | 0.00 | 1.00 | 0.98 | 0.43 | 1.00 | 0.98 | 1.00 | 0.85 | 0.94 | blind |
 | Korrelationsbruch | 1.00 | 0.98 | 0.66 | 0.03 | 1.00 | 0.78 | 0.23 | 1.00 | 0.84 | 0.93 | Autoencoder besser |
 | 40 Rauschmerkmale | 0.17 | 0.03 | 0.99 | 0.92 | 0.42 | 0.99 | 0.42 | 0.90 | 0.36 | 0.72 | blind |
 | Kleine Stichprobe (50 Touren) | 0.14 | 0.00 | 1.00 | 0.89 | 0.38 | 1.00 | 0.83 | 0.87 | 0.42 | 0.76 | blind |
@@ -68,12 +68,12 @@ Regler: Touren (20–600), Merkmale (2–30), Rauschmerkmale (0–40), Betriebsa
 - **Autoencoder** (`aeano_algorithm.py`, numpy von Grund auf): Encoder p → Breite^Tiefe → Engpass k (linear), Decoder k → Breite^Tiefe → p (linearer Ausgang), tanh oder ReLU, mit Bias, Xavier bzw. He; mittlerer quadrierter Rekonstruktionsfehler, **Backpropagation von Hand** (gegen Finite Differenzen geprüft), Adam, Vollbatch, Momentaufnahmen inkl. Epoche 0.
   Wert = mittleres Fehlerquadrat je Tour (z-Einheiten), Schwelle = (1 − ν)-Quantil der Trainingsfehler. **PCA-Residuum** in geschlossener Form (Singulärwertzerlegung); **Hauptwinkel** zwischen Decoder-Unterraum und PCA-Unterraum.
 - **Deep SVDD** (`aeano_dsvdd.py`), **One-Class SVM** (`aeano_ocsvm.py`), **Isolation Forest**, **LOF**, **ECOD** und **Wurzel** (`aeano_isolation_forest.py`, `aeano_lof.py`, `aeano_ecod.py`, `aeano_ee_algorithm.py`): wortgleich aus den Vorgängern.
-- **Auswertung** (`aeano_evaluation.py`): AUC, mittlere Präzision, Precision, Recall, F1, Fehlalarmrate für vier Detektoren und fünf Bezugsdetektoren; **F1 mit bekanntem Anteil** als Referenz für die Schwelle; Sweeps, Experiment-Tabellen (Epochenverlauf, Netz-Seeds, Engpass, lineares Autoencoder gegen PCA, Kosten), Urteil.
+- **Auswertung** (`aeano_evaluation.py`): AUC, mittlere Präzision, Precision, Recall, F1, Fehlalarmrate für vier Detektoren und fünf Bezugsdetektoren; **F1 mit bekanntem Anteil** als Referenz für die Schwelle; Sweeps, Experiment-Tabellen (Epochenverlauf, Netz-Seeds, Engpass, linearer Autoencoder gegen PCA, Kosten), Urteil.
 
 ## Was nicht funktioniert hat / Grenzen
 
-- **Vorab-Vermutungen (vor dem Bau gemessen):** (1) "Blind für Anomalien im Faktorraum" – **bestätigt, in der Ebene** (Standardfall AUC 0.68, PCA-Residuum 0.49, lineares Autoencoder 0.49); nichtlineare Netze sind nicht ganz so blind (0.68 statt 0.49), weil sie nach 300 Epochen noch nicht alles rekonstruieren.
-  (2) "Stark beim Korrelationsbruch" – **bestätigt** (1.00, F1 0.98), gleichauf mit dem PCA-Residuum und der Wurzel. (3) "PCA-Residuum = lineares Autoencoder" – **bestätigt** (Winkel 0.03°, AUC 0.49 gegen 0.49); "nichtlineare Netze bringen bei gekrümmtem Normalbereich mehr" – **nicht bestätigt**: PCA-Residuum 0.99, Autoencoder 0.98.
+- **Vorab-Vermutungen (vor dem Bau gemessen):** (1) "Blind für Anomalien im Faktorraum" – **bestätigt, in der Ebene** (Standardfall AUC 0.68, PCA-Residuum 0.49, linearer Autoencoder 0.49); nichtlineare Netze sind nicht ganz so blind (0.68 statt 0.49), weil sie nach 300 Epochen noch nicht alles rekonstruieren.
+  (2) "Stark beim Korrelationsbruch" – **bestätigt** (1.00, F1 0.98), gleichauf mit dem PCA-Residuum und der Wurzel. (3) "PCA-Residuum = linearer Autoencoder" – **bestätigt** (Winkel 0.03°, AUC 0.49 gegen 0.49); "nichtlineare Netze bringen bei gekrümmtem Normalbereich mehr" – **nicht bestätigt**: PCA-Residuum 0.99, Autoencoder 0.98.
   (4) "Training: die AUC kann fallen" – **bestätigt und stärker als bei Deep SVDD** (1.00 → 0.56 nach 1000 Epochen, je nach Rechner bis 0.67); das Ziel „gut rekonstruieren“ ist nicht das Ziel „Anomalien finden“. (5) "Kontamination: das Training lernt Anomalien mit" – bestätigt (0.85 bei 2 %, 0.63 bei 45 %). (6) "Dichte Gruppe mitgelernt, Lücke blind" – bestätigt (0.50 und 0.49).
   (7) "Rauschmerkmale: der Fehler wird von Rauschen dominiert" – **bestätigt, schärfer als gedacht**: **unter Raten** (0.25), 96 % des Fehlers aus den Rauschspalten. (8) "Netz-Seed-Streuung" – bestätigt (± 0.07 nach 300 Epochen). (9) "Kosten wie Deep SVDD" – bestätigt (das Eineinhalb- bis Zweieinhalbfache).
   Nicht vorhergesagt: die **AUC unter Raten bei wenigen Touren** (0.00 bei 20 Touren: die Sonderfahrten werden besser rekonstruiert als die normalen Touren) und dass ein **Engpass unter der latenten Dimension** (1) den Standardfall auf 0.88 hebt.
@@ -84,7 +84,7 @@ Regler: Touren (20–600), Merkmale (2–30), Rauschmerkmale (0–40), Betriebsa
 ## Verifikation
 
 - Autoencoder: **Gradienten gegen Finite Differenzen** (tanh und ReLU × Tiefe 0–2 × Engpass 1 und 3: 12 Konfigurationen, Gewichte und Bias), Aktivierungsableitungen, Aufbau (Schichtgrößen, Parameterzahl, Engpass-Kode), Wert = mittleres Fehlerquadrat und Fehler je Merkmal summieren zum Wert, Schwelle = (1 − ν)-Quantil (markiert höchstens ν), Verlust fällt und 0 Epochen = untrainiert, Determinismus und Netz-Seed,
-  ein trainiertes Netz findet Touren, die die Ebene verlassen; **PCA-Residuum** (Handinstanz mit Rang 1, gegen `numpy.linalg.svd`, Eckart-Young, monoton im Engpass); **lineares Autoencoder → PCA-Unterraum** (Hauptwinkel unter 8° nach 2000 Epochen, Fehler gleich dem PCA-Residuum); Hauptwinkel-Handinstanz.
+  ein trainiertes Netz findet Touren, die die Ebene verlassen; **PCA-Residuum** (Handinstanz mit Rang 1, gegen `numpy.linalg.svd`, Eckart-Young, monoton im Engpass); **linearer Autoencoder → PCA-Unterraum** (Hauptwinkel unter 8° nach 2000 Epochen, Fehler gleich dem PCA-Residuum); Hauptwinkel-Handinstanz.
 - Übernommene Bausteine: One-Class SVM (gegen `sklearn.svm.OneClassSVM`), Deep SVDD (bias-frei, deterministisch, Schwelle), LOF, Isolation Forest, Wurzel-Schätzer (χ² gegen scipy), ECOD-Schwanzwahrscheinlichkeiten. Szenario: normale Zeilen wie in der PCA-Demo (eingefrorene Zeilensummen), eingefrorener Standardfall, `n_noise` ändert nur angehängte Spalten, exakter Anomalie-Anteil, Geometrie der Arten, Korrelationsbruch.
 - **Alle Zahlen der App-Texte sind als Tests hinterlegt** (Seitenleiste, Presets, Grenzen-Tabelle, Epochen-, Netz-Seed-, Engpass-, Winkel-, Szenarien-, Schwellen- und Kostentabellen, dazu die Fehleranteile der Rauschspalten und der Sonderfahrten bei wenigen Touren; jeweils Mittel über die festen Sweep-Datensätze, positive **und** negative Aussagen; **weite Bänder für trainierte Netze** wegen numpy-/BLAS-Rundung, enge für das untrainierte Netz und das PCA-Residuum; Rechenzeiten nur als Größenordnung);
   alle 7 Presets in Bändern; AppTest-Rauchtests (Default, jedes Preset, jeder Schritt bei 2, 12 und 30 Merkmalen, lineare und tiefe Netze × jede Art der Anomalien, Extremwerte aller Netzregler, Abspielen ohne doppelte Schlüssel, Netz-Seed-Knopf, ausgeblendete Regler behalten ihre Werte, Sweep-Optionen, Experimente auf Abruf),
@@ -94,13 +94,13 @@ Regler: Touren (20–600), Merkmale (2–30), Rauschmerkmale (0–40), Betriebsa
 
 | Datei | Zweck |
 |---|---|
-| `app.py` | Streamlit-App: Schritte, Ergebnis, 📐 Sweeps, 🔬 Experimente (Epochenverlauf, Engpass, lineares Autoencoder gegen PCA, Netz-Seeds, Szenarien, Schwelle, Kosten), 🚧 Grenzen, Mathe |
+| `app.py` | Streamlit-App: Schritte, Ergebnis, 📐 Sweeps, 🔬 Experimente (Epochenverlauf, Engpass, linearer Autoencoder gegen PCA, Netz-Seeds, Szenarien, Schwelle, Kosten), 🚧 Grenzen, Mathe |
 | `aeano_algorithm.py` | Autoencoder (Netz, Backpropagation von Hand, Adam, Momentaufnahmen), PCA-Residuum, Hauptwinkel |
 | `aeano_dsvdd.py`, `aeano_ocsvm.py`, `aeano_lof.py`, `aeano_isolation_forest.py`, `aeano_ee_algorithm.py`, `aeano_ecod.py` | Deep SVDD, One-Class SVM, LOF, Isolation Forest, χ²-Verteilung, klassische Schätzung, FastMCD, ECOD (wortgleich aus den Vorgängern) |
 | `aeano_scenario.py`, `aeano_constants.py` | Touren mit Betriebsarten, Krümmung, Anomalien (auch Korrelationsbruch) und Rauschmerkmalen; Konstanten, Presets |
 | `aeano_evaluation.py` | Kennzahlen, Analyse, Schwellen, Sweeps, Experimente, Urteil |
 | `aeano_presets.py`, `aeano_visualization.py` | Permalink/Presets (ausgeblendete Regler), Plotly-Figuren (achsengesperrt) |
-| `tests/` | Autoencoder (Finite-Differenzen-Gradienten, PCA-Residuum, lineares Autoencoder gegen PCA), Szenario und Kennzahlen, Aussagen der App, Presets, AppTest |
+| `tests/` | Autoencoder (Finite-Differenzen-Gradienten, PCA-Residuum, linearer Autoencoder gegen PCA), Szenario und Kennzahlen, Aussagen der App, Presets, AppTest |
 
 ## Lokal ausführen
 
