@@ -188,7 +188,7 @@ def build_training(loss_history, epochs, aucs):
     """Links der mittlere Rekonstruktionsfehler über die Epochen (logarithmische Achsen), rechts die AUC des Rekonstruktionsfehlers an den Momentaufnahmen (Epoche 0 = untrainiert)."""
     fig = make_subplots(rows=1, cols=2, subplot_titles=("Trainingsverlust", "AUC des Rekonstruktionsfehlers"), horizontal_spacing=0.12)
     if len(loss_history):
-        fig.add_trace(go.Scatter(x=np.arange(1, len(loss_history) + 1), y=loss_history, mode="lines", line=dict(color=BLUE, width=3), hoverinfo="skip", showlegend=False), row=1, col=1)
+        fig.add_trace(go.Scatter(x=np.arange(len(loss_history)), y=loss_history, mode="lines", line=dict(color=BLUE, width=3), hoverinfo="skip", showlegend=False), row=1, col=1)
     fig.add_trace(go.Scatter(x=[str(e) for e in epochs], y=aucs, mode="lines+markers", line=dict(color=PINK, width=3), hoverinfo="skip", showlegend=False), row=1, col=2)
     fig.add_hline(y=0.5, line=dict(color=GRAY, dash="dot"), row=1, col=2)
     fig.update_xaxes(title="Epoche", type="log", col=1)

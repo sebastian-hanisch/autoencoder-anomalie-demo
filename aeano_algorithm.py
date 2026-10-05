@@ -114,7 +114,7 @@ class Model:
     snapshots: dict                  # Epoche -> Fehler je Tour (Kopie), inkl. 0 und n_epochs
     code_snapshots: dict             # Epoche -> Kodes (Kopie)
     weight_snapshots: dict           # Epoche -> (Gewichte, Biases) (Kopien)
-    loss_history: np.ndarray         # [n_epochs] Trainingsverlust
+    loss_history: np.ndarray         # [n_epochs + 1] Trainingsverlust, Index k = nach k Schritten (0 = untrainiert, letzter = fertiges Netz); leer bei 0 Epochen
     threshold: float                 # (1 - nu)-Quantil der Trainingsfehler
     nu: float
     lr: float
@@ -172,6 +172,8 @@ def fit_autoencoder(X, n_code=2, depth=1, width=16, activation="tanh", nu=0.1, l
             code_snapshots[epoch] = c.copy()
             weight_snapshots[epoch] = ([w.copy() for w in weights], [b.copy() for b in biases])
     errors, code = _errors_and_code(weights, biases, Z, activation, depth)
+    if n_epochs > 0:
+        loss_history = np.append(loss_history, float(errors.mean()))                             # Verlust des fertigen Netzes: Index k = Verlust nach k Schritten (die Schleife misst vor dem Schritt)
     return Model(weights=weights, biases=biases, activation=activation, depth=depth, width=width, n_code=n_code, mean=mean, scale=scale, Z=Z, errors=errors, code=code, snapshots=snapshots,
                  code_snapshots=code_snapshots, weight_snapshots=weight_snapshots, loss_history=loss_history, threshold=quantile_threshold(errors, nu), nu=float(nu), lr=float(lr), n_epochs=int(n_epochs), seed=int(seed))
 

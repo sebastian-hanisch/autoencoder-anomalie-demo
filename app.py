@@ -389,7 +389,7 @@ elif step == 2:
                "Ein zufälliges Netz gibt fast nichts wieder (die Rekonstruktion ist fast null): der Fehler ist im Wesentlichen die Länge der Tour, also ihr Abstand von der Mitte - das ist schon ein guter Detektor für weit entfernte Touren.")
 elif step == 3:
     st.caption((f"Nach {net.n_epochs} Epochen: AUC {snap_auc[net.n_epochs]:.2f} (untrainiert {snap_auc[0]:.2f}); Trainingsverlust {net.loss_history[-1]:.4f} (Start {net.loss_history[0]:.4f}). "
-                "Der Verlust fällt immer - die Rangfolge nicht: je besser das Netz rekonstruiert, desto besser rekonstruiert es auch die Anomalien, die in der gelernten Struktur liegen.") if net.n_epochs > 0 else
+                "Der Verlust fällt im Ganzen (von Epoche zu Epoche schwankt er, Adam überschwingt) - die Rangfolge nicht: je besser das Netz rekonstruiert, desto besser rekonstruiert es auch die Anomalien, die in der gelernten Struktur liegen.") if net.n_epochs > 0 else
                "0 Epochen gewählt: es wird nicht trainiert, der Fehler ist der des zufälligen Netzes.")
 elif step == 4:
     st.caption(f"Mittlerer Fehler der normalen Touren {values[~ds.anomaly].mean():.3f}, der Sonderfahrten {values[ds.anomaly].mean():.3f}; die Schwelle {net.threshold:.3f} markiert {ae_s['n_flagged']} von {ds.n} Touren. "
